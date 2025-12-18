@@ -1,4 +1,4 @@
 package com.example.demo.service.implement;
-public class {
+public class FacilityServiceImplement {
     
 }
