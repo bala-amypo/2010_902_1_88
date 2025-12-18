@@ -1,4 +1,4 @@
 package com.example.demo.service;
-public class BookingServiveService{
+public class BookingService{
     
 }
