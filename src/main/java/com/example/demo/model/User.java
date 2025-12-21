@@ -29,3 +29,6 @@ public class User {
     @OneToOne(mappedBy = "owner")
     private ApartmentUnit apartmentUnit;
 }
+
+
+
