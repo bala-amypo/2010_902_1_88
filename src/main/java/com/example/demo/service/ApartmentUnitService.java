@@ -1,4 +1,9 @@
 package com.example.demo.service;
-public class ApartmentUnitService{
-    
+
+import com.example.demo.model.ApartmentUnit;
+import com.example.demo.model.User;
+
+public interface ApartmentUnitService {
+    ApartmentUnit assignUnit(Long userId, ApartmentUnit unit);
+    ApartmentUnit getUnitByUser(Long userId);
 }
