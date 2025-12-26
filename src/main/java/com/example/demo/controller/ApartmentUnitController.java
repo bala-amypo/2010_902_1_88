@@ -5,8 +5,6 @@ import com.example.demo.service.ApartmentUnitService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/units")
 public class ApartmentUnitController {
@@ -18,16 +16,18 @@ public class ApartmentUnitController {
     }
 
     @PostMapping("/assign/{userId}")
-    public ResponseEntity<?> assignUnit(@PathVariable Long userId, @RequestBody ApartmentUnit unit) {
-        unit.setUserId(userId);
-        ApartmentUnit saved = apartmentUnitService.createUnit(unit);
+    public ResponseEntity<?> assignUnit(@PathVariable Long userId,
+                                        @RequestBody ApartmentUnit unit) {
+        ApartmentUnit saved =
+                apartmentUnitService.assignUnitToUser(userId, unit);
         return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getUnitsByUser(@PathVariable Long userId) {
-        List<ApartmentUnit> units = apartmentUnitService.getUnitsByUserId(userId);
-        return ResponseEntity.ok(units);
+    public ResponseEntity<?> getUnitByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(
+                apartmentUnitService.getUnitByUserId(userId)
+        );
     }
 }
 

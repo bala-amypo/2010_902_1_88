@@ -5,8 +5,6 @@ import com.example.demo.service.FacilityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/facilities")
 public class FacilityController {
@@ -18,15 +16,17 @@ public class FacilityController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addFacility(@RequestBody Facility facility) {
-        Facility saved = facilityService.addFacility(facility);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<?> create(@RequestBody Facility facility) {
+        return ResponseEntity.ok(
+                facilityService.createFacility(facility)
+        );
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllFacilities() {
-        List<Facility> facilities = facilityService.getAllFacilities();
-        return ResponseEntity.ok(facilities);
+    public ResponseEntity<?> list() {
+        return ResponseEntity.ok(
+                facilityService.getAllFacilities()
+        );
     }
 }
 
