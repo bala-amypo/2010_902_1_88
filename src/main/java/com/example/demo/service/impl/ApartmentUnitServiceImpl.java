@@ -12,22 +12,17 @@ import java.util.List;
 @Service
 public class ApartmentUnitServiceImpl implements ApartmentUnitService {
 
-    private final ApartmentUnitRepository apartmentUnitRepository;
-
     @Autowired
-    public ApartmentUnitServiceImpl(ApartmentUnitRepository apartmentUnitRepository) {
-        this.apartmentUnitRepository = apartmentUnitRepository;
-    }
+    private ApartmentUnitRepository apartmentUnitRepository;
 
     @Override
     public ApartmentUnit assignUnit(Long unitId, ApartmentUnit unitDetails) {
         ApartmentUnit unit = apartmentUnitRepository.findById(unitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found with id: " + unitId));
 
-        // Make sure these match your model's field names
         unit.setUnitNumber(unitDetails.getUnitNumber());
-        unit.setUnitStatus(unitDetails.getUnitStatus());
-        unit.setUnitType(unitDetails.getUnitType());
+        unit.setStatus(unitDetails.getStatus());
+        unit.setType(unitDetails.getType());
         unit.setFloor(unitDetails.getFloor());
 
         return apartmentUnitRepository.save(unit);
