@@ -1,33 +1,31 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service  // <-- VERY IMPORTANT
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repo;
-    private final PasswordEncoder encoder;
+    private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository repo, PasswordEncoder encoder) {
-        this.repo = repo;
-        this.encoder = encoder;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    public User register(User user) {
-        if (repo.existsByEmail(user.getEmail())) {
-            throw new BadRequestException("duplicate email");
-        }
-        user.setPassword(encoder.encode(user.getPassword()));
-        if (user.getRole() == null) user.setRole("RESIDENT");
-        return repo.save(user);
+    public User registerUser(String name, String email, String password) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password); // You might want to encode it
+        user.setRole("USER");       // default role
+        return userRepository.save(user);
     }
 
     @Override
-    public User findByEmail(String email) {
-        return repo.findByEmail(email).orElseThrow();
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
