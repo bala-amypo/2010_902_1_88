@@ -12,8 +12,9 @@
     <packaging>jar</packaging>
 
     <name>Apartment Facility Booking System</name>
-    <description>Apartment Facility Booking System – Test Compatible Build</description>
+    <description>Apartment Facility Booking System</description>
 
+    <!-- ================= PROPERTIES ================= -->
     <properties>
         <java.version>17</java.version>
         <spring.boot.version>3.2.0</spring.boot.version>
@@ -23,9 +24,7 @@
         <lombok.version>1.18.30</lombok.version>
     </properties>
 
-    <!-- ====================================================== -->
-    <!-- Spring Boot Dependency Management -->
-    <!-- ====================================================== -->
+    <!-- ============ SPRING BOOT BOM ============ -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -38,18 +37,16 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- ====================================================== -->
-    <!-- DEPENDENCIES -->
-    <!-- ====================================================== -->
+    <!-- ================= DEPENDENCIES ================= -->
     <dependencies>
 
-        <!-- Spring Core -->
+        <!-- Spring Boot Core -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- Spring Web (Controllers + Servlet API) -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -61,19 +58,19 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Spring Security Core (Authentication, UserDetails) -->
+        <!-- Spring Security Core -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
 
-        <!-- Spring Security Crypto (PasswordEncoder, BCrypt) -->
+        <!-- Spring Security Crypto -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
-        <!-- JWT (REQUIRED by tests) -->
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -100,21 +97,21 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jakarta Servlet API -->
+        <!-- Servlet API -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- MySQL Driver (not used in tests but required by spec) -->
+        <!-- MySQL Driver -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ==================== TEST DEPENDENCIES ==================== -->
+        <!-- ================= TEST DEPENDENCIES ================= -->
 
         <!-- TestNG -->
         <dependency>
@@ -124,7 +121,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito Core -->
+        <!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -132,7 +129,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito Inline (for final classes) -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
@@ -140,7 +136,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Spring Test (MockHttpServletRequest / Response) -->
+        <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -149,9 +145,7 @@
 
     </dependencies>
 
-    <!-- ====================================================== -->
-    <!-- BUILD CONFIG -->
-    <!-- ====================================================== -->
+    <!-- ================= BUILD ================= -->
     <build>
         <plugins>
 
@@ -166,17 +160,23 @@
                 </configuration>
             </plugin>
 
-            <!-- TestNG Configuration -->
+            <!-- TestNG -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <useSystemClassLoader>true</useSystemClassLoader>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+
+            <!-- ✅ SPRING BOOT PLUGIN (FIXES YOUR ERROR) -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
             </plugin>
 
         </plugins>
