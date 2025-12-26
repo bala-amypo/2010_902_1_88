@@ -12,10 +12,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    public CustomUserDetailsService() {
-        // Optional: initialize default admin user if needed
-    }
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
@@ -24,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole()) // Role as String, e.g., "ADMIN"
+                .roles(user.getRole())
                 .build();
     }
 }
