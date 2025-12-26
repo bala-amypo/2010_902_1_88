@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.BookingLog;
 import com.example.demo.model.Booking;
+import com.example.demo.model.BookingLog;
 import com.example.demo.repository.BookingLogRepository;
 import com.example.demo.repository.BookingRepository;
 import com.example.demo.service.BookingLogService;
@@ -22,8 +22,11 @@ public class BookingLogServiceImpl implements BookingLogService {
     }
 
     @Override
-    public BookingLog createLog(Booking booking, String action, String message) {
-        BookingLog log = new BookingLog(booking, action, message);
+    public BookingLog addLog(Long bookingId, String action) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
+
+        BookingLog log = new BookingLog(booking, action, ""); // message can be empty or customizable
         return bookingLogRepository.save(log);
     }
 
@@ -31,6 +34,6 @@ public class BookingLogServiceImpl implements BookingLogService {
     public List<BookingLog> getLogsByBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
-        return bookingLogRepository.findByBooking(booking);
+        return bookingLogRepository.findAllByBooking(booking);
     }
 }
