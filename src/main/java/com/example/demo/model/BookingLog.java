@@ -1,33 +1,51 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "booking_logs")
 public class BookingLog {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "booking_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @Column(nullable = false)
-    private String logMessage;
+    private String action; // e.g., CREATED, UPDATED, CANCELLED
 
     @Column(nullable = false)
-    private LocalDateTime loggedAt;
+    private LocalDateTime timestamp;
 
-    @PrePersist
-    public void onCreate() {
-        this.loggedAt = LocalDateTime.now();
+    @Column(length = 500)
+    private String details;
+
+    // Constructors
+    public BookingLog() {}
+
+    public BookingLog(Booking booking, String action, LocalDateTime timestamp, String details) {
+        this.booking = booking;
+        this.action = action;
+        this.timestamp = timestamp;
+        this.details = details;
     }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Booking getBooking() { return booking; }
+    public void setBooking(Booking booking) { this.booking = booking; }
+
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+
+    public String getDetails() { return details; }
+    public void setDetails(String details) { this.details = details; }
 }
