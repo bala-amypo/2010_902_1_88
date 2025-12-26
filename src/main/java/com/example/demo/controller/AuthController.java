@@ -1,24 +1,26 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public AuthController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PostMapping("/login")
-    public User login(@RequestBody User user) {
-        return userService.findByEmail(user.getEmail());
+    @PostMapping("/register")
+    public String register(@RequestParam String name,
+                           @RequestParam String email,
+                           @RequestParam String password) {
+        if (userService.existsByEmail(email)) {
+            return "Email already exists";
+        }
+        userService.registerUser(name, email, password);
+        return "User registered successfully";
     }
 }
