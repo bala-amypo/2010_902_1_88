@@ -1,30 +1,37 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.model.ApartmentUnit;
+import com.example.demo.model.User;
+import com.example.demo.repository.ApartmentUnitRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ApartmentUnitService;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.NotFoundException;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ApartmentUnitServiceImpl implements ApartmentUnitService {
 
     private final ApartmentUnitRepository unitRepo;
     private final UserRepository userRepo;
 
-    public ApartmentUnitServiceImpl(ApartmentUnitRepository u, UserRepository ur) {
-        this.unitRepo = u;
-        this.userRepo = ur;
+    public ApartmentUnitServiceImpl(ApartmentUnitRepository unitRepo,
+                                    UserRepository userRepo) {
+        this.unitRepo = unitRepo;
+        this.userRepo = userRepo;
     }
 
     @Override
-    public ApartmentUnit assignUnitToUser(Long userId, ApartmentUnit unit) {
-        User user = userRepo.findById(userId).orElseThrow();
+    public ApartmentUnit assignUnit(Long userId, ApartmentUnit unit) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (unit.getId() != null) {
+            throw new BadRequestException("New unit cannot already have an ID");
+        }
+
         unit.setOwner(user);
-        user.setApartmentUnit(unit);
         return unitRepo.save(unit);
-    }
-
-    @Override
-    public ApartmentUnit getUnitByUser(Long userId) {
-        User u = userRepo.findById(userId).orElseThrow();
-        return unitRepo.findByOwner(u).orElseThrow();
     }
 }
