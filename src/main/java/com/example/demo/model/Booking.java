@@ -12,20 +12,30 @@ public class Booking {
     private Long id;
 
     @ManyToOne
-    private User user;
+    @JoinColumn(name = "facility_id", nullable = false)
+    private Facility facility;
 
     @ManyToOne
-    private Facility facility;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
     private String status;
 
-    public Booking() {}
+    // Booking status constants
+    public static final String STATUS_CONFIRMED = "CONFIRMED";
+    public static final String STATUS_CANCELLED = "CANCELLED";
 
-    public Booking(User user, Facility facility, LocalDateTime startTime, LocalDateTime endTime, String status) {
-        this.user = user;
+    public Booking() {
+        // default constructor for JPA
+    }
+
+    // Optional: full constructor
+    public Booking(Facility facility, User user, LocalDateTime startTime, LocalDateTime endTime, String status) {
         this.facility = facility;
+        this.user = user;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
@@ -35,11 +45,11 @@ public class Booking {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
     public Facility getFacility() { return facility; }
     public void setFacility(Facility facility) { this.facility = facility; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     public LocalDateTime getStartTime() { return startTime; }
     public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }

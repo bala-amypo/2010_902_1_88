@@ -1,14 +1,9 @@
 package com.example.demo.model;
 
-import lombok.*;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "booking_logs")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class BookingLog {
 
     @Id
@@ -18,12 +13,28 @@ public class BookingLog {
     @ManyToOne
     private Booking booking;
 
-    private String logMessage;
+    private String action;
+    private String performedBy; // or Long userId depending on your logic
 
-    private LocalDateTime loggedAt;
+    public BookingLog() {}
 
-    @PrePersist
-    public void onCreate() {
-        loggedAt = LocalDateTime.now();
+    // Constructor to match your usage
+    public BookingLog(Booking booking, String action, String performedBy) {
+        this.booking = booking;
+        this.action = action;
+        this.performedBy = performedBy;
     }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Booking getBooking() { return booking; }
+    public void setBooking(Booking booking) { this.booking = booking; }
+
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+
+    public String getPerformedBy() { return performedBy; }
+    public void setPerformedBy(String performedBy) { this.performedBy = performedBy; }
 }
