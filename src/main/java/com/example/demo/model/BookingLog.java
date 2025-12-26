@@ -1,51 +1,29 @@
 package com.example.demo.model;
 
+import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "booking_logs")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingLog {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @ManyToOne
     private Booking booking;
 
-    @Column(nullable = false)
-    private String action; // e.g., CREATED, UPDATED, CANCELLED
+    private String logMessage;
 
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
+    private LocalDateTime loggedAt;
 
-    @Column(length = 500)
-    private String details;
-
-    // Constructors
-    public BookingLog() {}
-
-    public BookingLog(Booking booking, String action, LocalDateTime timestamp, String details) {
-        this.booking = booking;
-        this.action = action;
-        this.timestamp = timestamp;
-        this.details = details;
+    @PrePersist
+    public void onCreate() {
+        loggedAt = LocalDateTime.now();
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Booking getBooking() { return booking; }
-    public void setBooking(Booking booking) { this.booking = booking; }
-
-    public String getAction() { return action; }
-    public void setAction(String action) { this.action = action; }
-
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
-
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
 }
