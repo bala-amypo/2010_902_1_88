@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "booking_logs")
 public class BookingLog {
 
     @Id
@@ -12,20 +11,18 @@ public class BookingLog {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id")
     private Booking booking;
 
-    private String action; // e.g., "CREATED", "CANCELLED", etc.
-
-    private String message; // optional log message
-
+    private String action;
+    private String message;
     private LocalDateTime createdAt;
 
     public BookingLog() {
         // Default constructor for JPA
     }
 
-    // Constructor used in service
+    // Constructor to use in service
     public BookingLog(Booking booking, String action, String message) {
         this.booking = booking;
         this.action = action;
@@ -34,18 +31,40 @@ public class BookingLog {
     }
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public Booking getBooking() { return booking; }
-    public void setBooking(Booking booking) { this.booking = booking; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getAction() { return action; }
-    public void setAction(String action) { this.action = action; }
+    public Booking getBooking() {
+        return booking;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
