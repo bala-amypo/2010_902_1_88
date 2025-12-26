@@ -4,16 +4,10 @@ import com.example.demo.model.ApartmentUnit;
 import java.util.List;
 
 public interface ApartmentUnitService {
-
-    ApartmentUnit assignUnit(Long unitId, ApartmentUnit unitDetails);
-
+    ApartmentUnit addUnit(ApartmentUnit unit);
+    ApartmentUnit updateUnit(Long id, ApartmentUnit unit);
+    ApartmentUnit getUnitById(Long id);
     List<ApartmentUnit> getAllUnits();
-
-    ApartmentUnit getUnitById(Long unitId);
-
-    ApartmentUnit getUnitByUser(Long userId);
-
-    ApartmentUnit createUnit(ApartmentUnit unit);
-
-    void deleteUnit(Long unitId);
+    List<ApartmentUnit> getUnitByUser(Long userId);
+    void deleteUnit(Long id);
 }

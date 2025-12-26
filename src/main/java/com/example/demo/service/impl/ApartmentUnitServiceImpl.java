@@ -4,7 +4,6 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.ApartmentUnit;
 import com.example.demo.repository.ApartmentUnitRepository;
 import com.example.demo.service.ApartmentUnitService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,20 +11,32 @@ import java.util.List;
 @Service
 public class ApartmentUnitServiceImpl implements ApartmentUnitService {
 
-    @Autowired
-    private ApartmentUnitRepository apartmentUnitRepository;
+    private final ApartmentUnitRepository apartmentUnitRepository;
+
+    public ApartmentUnitServiceImpl(ApartmentUnitRepository apartmentUnitRepository) {
+        this.apartmentUnitRepository = apartmentUnitRepository;
+    }
 
     @Override
-    public ApartmentUnit assignUnit(Long unitId, ApartmentUnit unitDetails) {
-        ApartmentUnit unit = apartmentUnitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found with id: " + unitId));
-
-        unit.setUnitNumber(unitDetails.getUnitNumber());
-        unit.setStatus(unitDetails.getStatus());
-        unit.setType(unitDetails.getType());
-        unit.setFloor(unitDetails.getFloor());
-
+    public ApartmentUnit addUnit(ApartmentUnit unit) {
         return apartmentUnitRepository.save(unit);
+    }
+
+    @Override
+    public ApartmentUnit updateUnit(Long id, ApartmentUnit unit) {
+        ApartmentUnit existing = getUnitById(id);
+        existing.setUnitNumber(unit.getUnitNumber());
+        existing.setStatus(unit.getStatus());
+        existing.setType(unit.getType());
+        existing.setFloor(unit.getFloor());
+        existing.setUserId(unit.getUserId());
+        return apartmentUnitRepository.save(existing);
+    }
+
+    @Override
+    public ApartmentUnit getUnitById(Long id) {
+        return apartmentUnitRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ApartmentUnit not found with id " + id));
     }
 
     @Override
@@ -34,26 +45,13 @@ public class ApartmentUnitServiceImpl implements ApartmentUnitService {
     }
 
     @Override
-    public ApartmentUnit getUnitById(Long unitId) {
-        return apartmentUnitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found with id: " + unitId));
+    public List<ApartmentUnit> getUnitByUser(Long userId) {
+        return apartmentUnitRepository.findByUserId(userId);
     }
 
     @Override
-    public ApartmentUnit getUnitByUser(Long userId) {
-        return apartmentUnitRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found for user id: " + userId));
-    }
-
-    @Override
-    public ApartmentUnit createUnit(ApartmentUnit unit) {
-        return apartmentUnitRepository.save(unit);
-    }
-
-    @Override
-    public void deleteUnit(Long unitId) {
-        ApartmentUnit unit = apartmentUnitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found with id: " + unitId));
-        apartmentUnitRepository.delete(unit);
+    public void deleteUnit(Long id) {
+        ApartmentUnit existing = getUnitById(id);
+        apartmentUnitRepository.delete(existing);
     }
 }

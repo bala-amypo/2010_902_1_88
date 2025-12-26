@@ -3,22 +3,40 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "apartment_units")
 public class ApartmentUnit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String unitNumber;  // previously used getNumber()
-    private String status;      // previously getUnitStatus()
-    private String type;        // previously getUnitType()
-    private Integer floor;
+    @Column(name = "unit_number")
+    private String unitNumber;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "type")
+    private String type;
+
+    @Column(name = "floor")
+    private int floor;
 
     @Column(name = "user_id")
     private Long userId;
 
-    // Getters and Setters
+    // Constructors
+    public ApartmentUnit() {}
 
+    public ApartmentUnit(String unitNumber, String status, String type, int floor, Long userId) {
+        this.unitNumber = unitNumber;
+        this.status = status;
+        this.type = type;
+        this.floor = floor;
+        this.userId = userId;
+    }
+
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -31,8 +49,8 @@ public class ApartmentUnit {
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
-    public Integer getFloor() { return floor; }
-    public void setFloor(Integer floor) { this.floor = floor; }
+    public int getFloor() { return floor; }
+    public void setFloor(int floor) { this.floor = floor; }
 
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }

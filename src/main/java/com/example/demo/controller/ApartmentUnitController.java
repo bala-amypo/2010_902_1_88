@@ -2,23 +2,49 @@ package com.example.demo.controller;
 
 import com.example.demo.model.ApartmentUnit;
 import com.example.demo.service.ApartmentUnitService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/units")
 public class ApartmentUnitController {
 
-    @Autowired
-    private ApartmentUnitService unitService;
+    private final ApartmentUnitService apartmentUnitService;
 
-    @PostMapping("/assign/{userId}")
-    public ApartmentUnit assignUnit(@PathVariable Long userId, @RequestBody ApartmentUnit unit) {
-        return unitService.assignUnit(userId, unit);
+    public ApartmentUnitController(ApartmentUnitService apartmentUnitService) {
+        this.apartmentUnitService = apartmentUnitService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ApartmentUnit> addUnit(@RequestBody ApartmentUnit unit) {
+        return ResponseEntity.ok(apartmentUnitService.addUnit(unit));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApartmentUnit> updateUnit(@PathVariable Long id, @RequestBody ApartmentUnit unit) {
+        return ResponseEntity.ok(apartmentUnitService.updateUnit(id, unit));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApartmentUnit> getUnit(@PathVariable Long id) {
+        return ResponseEntity.ok(apartmentUnitService.getUnitById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ApartmentUnit>> getAllUnits() {
+        return ResponseEntity.ok(apartmentUnitService.getAllUnits());
     }
 
     @GetMapping("/user/{userId}")
-    public ApartmentUnit getUnit(@PathVariable Long userId) {
-        return unitService.getUnitByUser(userId);
+    public ResponseEntity<List<ApartmentUnit>> getUnitsByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(apartmentUnitService.getUnitByUser(userId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUnit(@PathVariable Long id) {
+        apartmentUnitService.deleteUnit(id);
+        return ResponseEntity.ok().build();
     }
 }
