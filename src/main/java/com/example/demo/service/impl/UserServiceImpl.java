@@ -1,34 +1,33 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repo;
+    private final PasswordEncoder encoder;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository repo, PasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
     }
 
     @Override
     public User register(User user) {
-        if(userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new BadRequestException("Email already exists");
+        if (repo.existsByEmail(user.getEmail())) {
+            throw new BadRequestException("duplicate email");
         }
-        return userRepository.save(user);
+        user.setPassword(encoder.encode(user.getPassword()));
+        if (user.getRole() == null) user.setRole("RESIDENT");
+        return repo.save(user);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return repo.findByEmail(email).orElseThrow();
     }
 }

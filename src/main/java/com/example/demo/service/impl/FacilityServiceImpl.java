@@ -1,30 +1,30 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.Facility;
 import com.example.demo.repository.FacilityRepository;
 import com.example.demo.service.FacilityService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class FacilityServiceImpl implements FacilityService {
 
-    private final FacilityRepository facilityRepository;
+    private final FacilityRepository repo;
 
-    @Autowired
-    public FacilityServiceImpl(FacilityRepository facilityRepository) {
-        this.facilityRepository = facilityRepository;
+    public FacilityServiceImpl(FacilityRepository repo) {
+        this.repo = repo;
     }
 
     @Override
-    public Facility addFacility(Facility facility) {
-        return facilityRepository.save(facility);
+    public Facility addFacility(Facility f) {
+        if (f.getOpenTime().compareTo(f.getCloseTime()) >= 0) {
+            throw new BadRequestException("time invalid");
+        }
+        return repo.save(f);
     }
 
     @Override
     public List<Facility> getAllFacilities() {
-        return facilityRepository.findAll();
+        return repo.findAll();
     }
 }

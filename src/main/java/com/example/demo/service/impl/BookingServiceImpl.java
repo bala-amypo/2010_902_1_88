@@ -1,73 +1,61 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ConflictException;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.Booking;
-import com.example.demo.model.Facility;
-import com.example.demo.model.User;
-import com.example.demo.repository.BookingRepository;
-import com.example.demo.repository.FacilityRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.BookingLogService;
-import com.example.demo.service.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
+import com.example.demo.service.*;
 
 import java.util.List;
 
-@Service
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final FacilityRepository facilityRepository;
-    private final UserRepository userRepository;
-    private final BookingLogService bookingLogService;
+    private final BookingRepository bookingRepo;
+    private final FacilityRepository facilityRepo;
+    private final UserRepository userRepo;
+    private final BookingLogService logService;
 
-    @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository,
-                              FacilityRepository facilityRepository,
-                              UserRepository userRepository,
-                              BookingLogService bookingLogService) {
-        this.bookingRepository = bookingRepository;
-        this.facilityRepository = facilityRepository;
-        this.userRepository = userRepository;
-        this.bookingLogService = bookingLogService;
+    public BookingServiceImpl(BookingRepository b, FacilityRepository f,
+                              UserRepository u, BookingLogService l) {
+        this.bookingRepo = b;
+        this.facilityRepo = f;
+        this.userRepo = u;
+        this.logService = l;
     }
 
     @Override
     public Booking createBooking(Long facilityId, Long userId, Booking booking) {
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResourceNotFoundException("Facility not found"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Facility f = facilityRepo.findById(facilityId).orElseThrow();
+        User u = userRepo.findById(userId).orElseThrow();
 
-        List<Booking> conflicts = bookingRepository
-                .findByFacilityAndStartTimeLessThanAndEndTimeGreaterThan(
-                        facility, booking.getEndTime(), booking.getStartTime());
+        List<Booking> conflicts =
+                bookingRepo.findByFacilityAndStartTimeLessThanAndEndTimeGreaterThan(
+                        f, booking.getEndTime(), booking.getStartTime());
 
-        if(!conflicts.isEmpty()) {
-            throw new ConflictException("Booking time conflicts with existing bookings");
+        if (!conflicts.isEmpty()) {
+            throw new ConflictException("conflict detected");
         }
 
-        booking.setFacility(facility);
-        booking.setUser(user);
-        Booking savedBooking = bookingRepository.save(booking);
-        bookingLogService.addLog(savedBooking.getId(), "Booking created");
-        return savedBooking;
+        booking.setFacility(f);
+        booking.setUser(u);
+        booking.setStatus(Booking.STATUS_CONFIRMED);
+
+        Booking saved = bookingRepo.save(booking);
+        logService.addLog(saved.getId(), "Created");
+
+        return saved;
     }
 
     @Override
-    public Booking cancelBooking(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
-        booking.setStatus("CANCELLED");
-        bookingLogService.addLog(bookingId, "Booking cancelled");
-        return bookingRepository.save(booking);
+    public Booking cancelBooking(Long id) {
+        Booking b = bookingRepo.findById(id).orElseThrow();
+        b.setStatus(Booking.STATUS_CANCELLED);
+        Booking saved = bookingRepo.save(b);
+        logService.addLog(saved.getId(), "Cancelled");
+        return saved;
     }
 
     @Override
-    public Booking getBooking(Long bookingId) {
-        return bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+    public Booking getBooking(Long id) {
+        return bookingRepo.findById(id).orElseThrow();
     }
 }

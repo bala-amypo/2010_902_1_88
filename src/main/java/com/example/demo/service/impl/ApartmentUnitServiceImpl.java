@@ -1,39 +1,30 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.ApartmentUnit;
-import com.example.demo.model.User;
-import com.example.demo.repository.ApartmentUnitRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.ApartmentUnitService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 public class ApartmentUnitServiceImpl implements ApartmentUnitService {
 
-    private final ApartmentUnitRepository unitRepository;
-    private final UserRepository userRepository;
+    private final ApartmentUnitRepository unitRepo;
+    private final UserRepository userRepo;
 
-    @Autowired
-    public ApartmentUnitServiceImpl(ApartmentUnitRepository unitRepository, UserRepository userRepository) {
-        this.unitRepository = unitRepository;
-        this.userRepository = userRepository;
+    public ApartmentUnitServiceImpl(ApartmentUnitRepository u, UserRepository ur) {
+        this.unitRepo = u;
+        this.userRepo = ur;
     }
 
     @Override
-    public ApartmentUnit assignUnit(Long userId, ApartmentUnit unit) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public ApartmentUnit assignUnitToUser(Long userId, ApartmentUnit unit) {
+        User user = userRepo.findById(userId).orElseThrow();
         unit.setOwner(user);
-        return unitRepository.save(unit);
+        user.setApartmentUnit(unit);
+        return unitRepo.save(unit);
     }
 
     @Override
     public ApartmentUnit getUnitByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return unitRepository.findByOwner(user)
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found for user"));
+        User u = userRepo.findById(userId).orElseThrow();
+        return unitRepo.findByOwner(u).orElseThrow();
     }
 }
