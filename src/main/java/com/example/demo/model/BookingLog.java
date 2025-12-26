@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "booking_logs")
@@ -11,21 +12,28 @@ public class BookingLog {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    private String action;
-    private String performedBy; // or Long userId depending on your logic
+    private String action; // e.g., "CREATED", "CANCELLED", etc.
 
-    public BookingLog() {}
+    private String message; // optional log message
 
-    // Constructor to match your usage
-    public BookingLog(Booking booking, String action, String performedBy) {
-        this.booking = booking;
-        this.action = action;
-        this.performedBy = performedBy;
+    private LocalDateTime createdAt;
+
+    public BookingLog() {
+        // Default constructor for JPA
     }
 
-    // Getters and Setters
+    // Constructor used in service
+    public BookingLog(Booking booking, String action, String message) {
+        this.booking = booking;
+        this.action = action;
+        this.message = message;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -35,6 +43,9 @@ public class BookingLog {
     public String getAction() { return action; }
     public void setAction(String action) { this.action = action; }
 
-    public String getPerformedBy() { return performedBy; }
-    public void setPerformedBy(String performedBy) { this.performedBy = performedBy; }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
