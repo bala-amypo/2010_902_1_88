@@ -24,11 +24,11 @@ public class ApartmentUnitServiceImpl implements ApartmentUnitService {
         ApartmentUnit unit = apartmentUnitRepository.findById(unitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found with id: " + unitId));
 
-        // Update unit details as needed
-        unit.setNumber(unitDetails.getNumber());
+        // Make sure these match your model's field names
+        unit.setUnitNumber(unitDetails.getUnitNumber());
+        unit.setUnitStatus(unitDetails.getUnitStatus());
+        unit.setUnitType(unitDetails.getUnitType());
         unit.setFloor(unitDetails.getFloor());
-        unit.setStatus(unitDetails.getStatus());
-        unit.setType(unitDetails.getType());
 
         return apartmentUnitRepository.save(unit);
     }
@@ -42,6 +42,12 @@ public class ApartmentUnitServiceImpl implements ApartmentUnitService {
     public ApartmentUnit getUnitById(Long unitId) {
         return apartmentUnitRepository.findById(unitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found with id: " + unitId));
+    }
+
+    @Override
+    public ApartmentUnit getUnitByUser(Long userId) {
+        return apartmentUnitRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment unit not found for user id: " + userId));
     }
 
     @Override
