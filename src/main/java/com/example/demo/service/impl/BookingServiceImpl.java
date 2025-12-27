@@ -1,61 +1,73 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ConflictException;
+import com.example.demo.service.BookingService;
+import com.example.demo.service.BookingLogService;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
-import com.example.demo.service.*;
+import com.example.demo.exception.*;
 
 import java.util.List;
 
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepo;
-    private final FacilityRepository facilityRepo;
-    private final UserRepository userRepo;
-    private final BookingLogService logService;
+    private final BookingRepository bookingRepository;
+    private final FacilityRepository facilityRepository;
+    private final UserRepository userRepository;
+    private final BookingLogService bookingLogService;
 
-    public BookingServiceImpl(BookingRepository b, FacilityRepository f,
-                              UserRepository u, BookingLogService l) {
-        this.bookingRepo = b;
-        this.facilityRepo = f;
-        this.userRepo = u;
-        this.logService = l;
+    public BookingServiceImpl(BookingRepository bookingRepository,
+                              FacilityRepository facilityRepository,
+                              UserRepository userRepository,
+                              BookingLogService bookingLogService) {
+        this.bookingRepository = bookingRepository;
+        this.facilityRepository = facilityRepository;
+        this.userRepository = userRepository;
+        this.bookingLogService = bookingLogService;
     }
 
     @Override
     public Booking createBooking(Long facilityId, Long userId, Booking booking) {
-        Facility f = facilityRepo.findById(facilityId).orElseThrow();
-        User u = userRepo.findById(userId).orElseThrow();
+        Facility facility = facilityRepository.findById(facilityId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Facility not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
         List<Booking> conflicts =
-                bookingRepo.findByFacilityAndStartTimeLessThanAndEndTimeGreaterThan(
-                        f, booking.getEndTime(), booking.getStartTime());
+                bookingRepository.findByFacilityAndStartTimeLessThanAndEndTimeGreaterThan(
+                        facility, booking.getEndTime(), booking.getStartTime());
 
         if (!conflicts.isEmpty()) {
             throw new ConflictException("conflict detected");
         }
 
-        booking.setFacility(f);
-        booking.setUser(u);
+        booking.setFacility(facility);
+        booking.setUser(user);
         booking.setStatus(Booking.STATUS_CONFIRMED);
 
-        Booking saved = bookingRepo.save(booking);
-        logService.addLog(saved.getId(), "Created");
-
+        Booking saved = bookingRepository.save(booking);
+        bookingLogService.addLog(saved.getId(), "Booking created");
         return saved;
     }
 
     @Override
-    public Booking cancelBooking(Long id) {
-        Booking b = bookingRepo.findById(id).orElseThrow();
-        b.setStatus(Booking.STATUS_CANCELLED);
-        Booking saved = bookingRepo.save(b);
-        logService.addLog(saved.getId(), "Cancelled");
+    public Booking cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Booking not found"));
+
+        booking.setStatus(Booking.STATUS_CANCELLED);
+        Booking saved = bookingRepository.save(booking);
+        bookingLogService.addLog(saved.getId(), "Booking cancelled");
         return saved;
     }
 
     @Override
-    public Booking getBooking(Long id) {
-        return bookingRepo.findById(id).orElseThrow();
+    public Booking getBooking(Long bookingId) {
+        return bookingRepository.findById(bookingId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Booking not found"));
     }
 }
