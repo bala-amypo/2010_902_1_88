@@ -1,14 +1,29 @@
 package com.example.demo.model;
 
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "booking_logs")
 public class BookingLog {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "booking_id")
     private Booking booking;
+
     private String logMessage;
     private LocalDateTime loggedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (loggedAt == null) {
+            loggedAt = LocalDateTime.now();
+        }
+    }
 
     public BookingLog() {}
 
@@ -21,13 +36,7 @@ public class BookingLog {
         this.loggedAt = loggedAt;
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (loggedAt == null) {
-            loggedAt = LocalDateTime.now();
-        }
-    }
-
+    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

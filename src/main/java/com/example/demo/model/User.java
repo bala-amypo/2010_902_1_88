@@ -11,20 +11,35 @@ public class User {
     private Long id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String password;
+
     private String role;
 
-    // Constructors
+    @OneToOne(mappedBy = "owner")
+    private ApartmentUnit apartmentUnit;
+
+    @PrePersist
+    public void prePersist() {
+        if (role == null) {
+            role = "RESIDENT";
+        }
+    }
+
     public User() {}
-    public User(String name, String email, String password, String role) {
+
+    public User(Long id, String name, String email, String password, String role) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
-    // Getters and Setters
+    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -39,4 +54,9 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public ApartmentUnit getApartmentUnit() { return apartmentUnit; }
+    public void setApartmentUnit(ApartmentUnit apartmentUnit) {
+        this.apartmentUnit = apartmentUnit;
+    }
 }

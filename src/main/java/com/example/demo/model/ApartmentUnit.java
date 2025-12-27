@@ -10,48 +10,34 @@ public class ApartmentUnit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "unit_number")
+    @Column(unique = true)
     private String unitNumber;
 
-    @Column(name = "status")
-    private String status;
+    private Integer floor;
 
-    @Column(name = "type")
-    private String type;
+    @OneToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
-    @Column(name = "floor")
-    private int floor;
-
-    @Column(name = "user_id")
-    private Long userId;
-
-    // Constructors
     public ApartmentUnit() {}
 
-    public ApartmentUnit(String unitNumber, String status, String type, int floor, Long userId) {
+    public ApartmentUnit(Long id, String unitNumber, Integer floor, User owner) {
+        this.id = id;
         this.unitNumber = unitNumber;
-        this.status = status;
-        this.type = type;
         this.floor = floor;
-        this.userId = userId;
+        this.owner = owner;
     }
 
-    // Getters and Setters
+    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public String getUnitNumber() { return unitNumber; }
     public void setUnitNumber(String unitNumber) { this.unitNumber = unitNumber; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public Integer getFloor() { return floor; }
+    public void setFloor(Integer floor) { this.floor = floor; }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-
-    public int getFloor() { return floor; }
-    public void setFloor(int floor) { this.floor = floor; }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public User getOwner() { return owner; }
+    public void setOwner(User owner) { this.owner = owner; }
 }
