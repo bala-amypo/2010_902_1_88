@@ -16,52 +16,28 @@ public class BookingController {
     }
 
     @PostMapping("/{facilityId}/{userId}")
-    public ResponseEntity<?> createBooking(@PathVariable Long facilityId,
-                                           @PathVariable Long userId,
-                                           @RequestBody Booking booking) {
-        Booking saved = bookingService.createBooking(facilityId, userId, booking);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<Booking> createBooking(
+            @PathVariable Long facilityId,
+            @PathVariable Long userId,
+            @RequestBody Booking booking) {
+        return ResponseEntity.ok(
+                bookingService.createBooking(facilityId, userId, booking)
+        );
     }
 
     @PutMapping("/cancel/{bookingId}")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId) {
-        Booking cancelled = bookingService.cancelBooking(bookingId);
-        return ResponseEntity.ok(cancelled);
+    public ResponseEntity<Booking> cancelBooking(
+            @PathVariable Long bookingId) {
+        return ResponseEntity.ok(
+                bookingService.cancelBooking(bookingId)
+        );
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<?> getBooking(@PathVariable Long bookingId) {
-        Booking booking = bookingService.getBookingById(bookingId);
-        return ResponseEntity.ok(booking);
+    public ResponseEntity<Booking> getBooking(
+            @PathVariable Long bookingId) {
+        return ResponseEntity.ok(
+                bookingService.getBooking(bookingId)
+        );
     }
 }
-
-// package com.example.demo.controller;
-
-// import com.example.demo.model.Booking;
-// import com.example.demo.service.BookingService;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.web.bind.annotation.*;
-
-// @RestController
-// @RequestMapping("/bookings")
-// public class BookingController {
-
-//     @Autowired
-//     private BookingService bookingService;
-
-//     @PostMapping("/{facilityId}/{userId}")
-//     public Booking createBooking(@PathVariable Long facilityId, @PathVariable Long userId, @RequestBody Booking booking) {
-//         return bookingService.createBooking(facilityId, userId, booking);
-//     }
-
-//     @PutMapping("/cancel/{bookingId}")
-//     public Booking cancelBooking(@PathVariable Long bookingId) {
-//         return bookingService.cancelBooking(bookingId);
-//     }
-
-//     @GetMapping("/{bookingId}")
-//     public Booking getBooking(@PathVariable Long bookingId) {
-//         return bookingService.getBooking(bookingId);
-//     }
-// }

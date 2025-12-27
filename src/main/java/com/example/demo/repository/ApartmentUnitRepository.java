@@ -1,11 +1,14 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.ApartmentUnit;
+import com.example.demo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import java.util.List;
 
-@Repository
+import java.util.Optional;
+
 public interface ApartmentUnitRepository extends JpaRepository<ApartmentUnit, Long> {
-    List<ApartmentUnit> findByUserId(Long userId);
+
+    Optional<ApartmentUnit> findByOwner(User owner);
+
+    boolean existsByUnitNumber(String unitNumber);
 }

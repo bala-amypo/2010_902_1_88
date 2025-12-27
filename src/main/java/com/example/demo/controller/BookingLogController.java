@@ -18,30 +18,10 @@ public class BookingLogController {
     }
 
     @GetMapping("/booking/{bookingId}")
-    public ResponseEntity<?> getLogs(@PathVariable Long bookingId) {
-        List<BookingLog> logs = bookingLogService.getLogsByBooking(bookingId);
-        return ResponseEntity.ok(logs);
+    public ResponseEntity<List<BookingLog>> getLogs(
+            @PathVariable Long bookingId) {
+        return ResponseEntity.ok(
+                bookingLogService.getLogsByBooking(bookingId)
+        );
     }
 }
-
-// package com.example.demo.controller;
-
-// import com.example.demo.model.BookingLog;
-// import com.example.demo.service.BookingLogService;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.web.bind.annotation.*;
-
-// import java.util.List;
-
-// @RestController
-// @RequestMapping("/logs")
-// public class BookingLogController {
-
-//     @Autowired
-//     private BookingLogService bookingLogService;
-
-//     @GetMapping("/booking/{bookingId}")
-//     public List<BookingLog> getLogs(@PathVariable Long bookingId) {
-//         return bookingLogService.getLogsByBooking(bookingId);
-//     }
-// }

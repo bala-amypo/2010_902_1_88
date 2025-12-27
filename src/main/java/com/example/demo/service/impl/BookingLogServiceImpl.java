@@ -1,15 +1,15 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.service.BookingLogService;
 import com.example.demo.model.Booking;
 import com.example.demo.model.BookingLog;
 import com.example.demo.repository.BookingLogRepository;
 import com.example.demo.repository.BookingRepository;
-import com.example.demo.service.BookingLogService;
-import org.springframework.stereotype.Service;
+import com.example.demo.exception.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
 public class BookingLogServiceImpl implements BookingLogService {
 
     private final BookingLogRepository bookingLogRepository;
@@ -22,18 +22,21 @@ public class BookingLogServiceImpl implements BookingLogService {
     }
 
     @Override
-    public BookingLog addLog(Long bookingId, String action) {
+    public BookingLog addLog(Long bookingId, String message) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Booking not found"));
 
-        BookingLog log = new BookingLog(booking, action, ""); // message can be empty or customizable
+        BookingLog log = new BookingLog(null, booking, message, LocalDateTime.now());
         return bookingLogRepository.save(log);
     }
 
     @Override
     public List<BookingLog> getLogsByBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
-        return bookingLogRepository.findAllByBooking(booking);
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Booking not found"));
+
+        return bookingLogRepository.findByBookingOrderByLoggedAtAsc(booking);
     }
 }
