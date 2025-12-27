@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.BookingLog;
+import com.example.demo.model.BookingLogModel;
 import com.example.demo.service.BookingLogService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,17 +11,14 @@ import java.util.List;
 @RequestMapping("/logs")
 public class BookingLogController {
 
-    private final BookingLogService bookingLogService;
+    private final BookingLogService logService;
 
-    public BookingLogController(BookingLogService bookingLogService) {
-        this.bookingLogService = bookingLogService;
+    public BookingLogController(BookingLogService logService) {
+        this.logService = logService;
     }
 
     @GetMapping("/booking/{bookingId}")
-    public ResponseEntity<List<BookingLog>> getLogs(
-            @PathVariable Long bookingId) {
-        return ResponseEntity.ok(
-                bookingLogService.getLogsByBooking(bookingId)
-        );
+    public ResponseEntity<List<BookingLogModel>> logs(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(logService.getLogsByBooking(bookingId));
     }
 }

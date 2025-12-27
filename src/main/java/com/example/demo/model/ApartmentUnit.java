@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "apartment_units")
-public class ApartmentUnit {
+public class ApartmentUnitModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,28 +16,40 @@ public class ApartmentUnit {
     private Integer floor;
 
     @OneToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    private UserModel owner;
 
-    public ApartmentUnit() {}
-
-    public ApartmentUnit(Long id, String unitNumber, Integer floor, User owner) {
-        this.id = id;
-        this.unitNumber = unitNumber;
-        this.floor = floor;
-        this.owner = owner;
+    public ApartmentUnitModel() {
     }
 
-    // getters & setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getUnitNumber() { return unitNumber; }
-    public void setUnitNumber(String unitNumber) { this.unitNumber = unitNumber; }
+    public String getUnitNumber() {
+        return unitNumber;
+    }
 
-    public Integer getFloor() { return floor; }
-    public void setFloor(Integer floor) { this.floor = floor; }
+    public Integer getFloor() {
+        return floor;
+    }
 
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
+    public UserModel getOwner() {
+        return owner;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUnitNumber(String unitNumber) {
+        this.unitNumber = unitNumber;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
+    public void setOwner(UserModel owner) {
+        this.owner = owner;
+    }
 }
