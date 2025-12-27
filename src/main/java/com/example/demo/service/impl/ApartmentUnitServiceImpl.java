@@ -1,13 +1,14 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.service.ApartmentUnitService;
-import com.example.demo.model.ApartmentUnit;
-import com.example.demo.model.User;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.model.ApartmentUnitModel;
+import com.example.demo.model.UserModel;
 import com.example.demo.repository.ApartmentUnitRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.service.ApartmentUnitService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ApartmentUnitServiceImpl implements ApartmentUnitService {
 
     private final ApartmentUnitRepository unitRepository;
@@ -20,25 +21,21 @@ public class ApartmentUnitServiceImpl implements ApartmentUnitService {
     }
 
     @Override
-    public ApartmentUnit assignUnitToUser(Long userId, ApartmentUnit unit) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+    public ApartmentUnitModel assignUnitToUser(Long userId, ApartmentUnitModel unit) {
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("Invalid user"));
 
         unit.setOwner(user);
-        ApartmentUnit saved = unitRepository.save(unit);
-        user.setApartmentUnit(saved);
-        return saved;
+        user.setApartmentUnit(unit);
+
+        return unitRepository.save(unit);
     }
 
     @Override
-    public ApartmentUnit getUnitByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
-
+    public ApartmentUnitModel getUnitByUser(Long userId) {
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("Invalid user"));
         return unitRepository.findByOwner(user)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Unit not found"));
+                .orElseThrow(() -> new BadRequestException("Unit not found"));
     }
 }
