@@ -34,6 +34,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -45,20 +47,22 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .formLogin(form -> form.disable())   // 🔥 disables login page
-            .httpBasic(basic -> basic.disable()) // 🔥 disables basic auth popup
+            .formLogin(form -> form.disable())     // no login page
+            .httpBasic(basic -> basic.disable())   // no popup
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/auth/**",
-                    "/login",
-                    "/register"
-                ).permitAll()
+                .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
             );
 
         return http.build();
+    }
+
+    // 🔥 THIS WAS MISSING
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
